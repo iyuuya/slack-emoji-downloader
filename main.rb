@@ -28,11 +28,17 @@ FileUtils.mkdir_p(download_dir) unless Dir.exist?(download_dir)
 Dir.chdir(download_dir) do
   client.emoji_list['emoji'].each do |emoji, url|
     if url =~ /^alias:/
-      puts "skip: #{emoji}"
+      puts "skip-alias: #{emoji}"
       next
     end
 
     emoji_filename = emoji + File.extname(url)
+
+    if File.exist?(emoji_filename)
+      puts "skip-file-exist: #{emoji_filename}"
+      next
+    end
+
     puts "download: #{emoji_filename}"
     open(emoji_filename, 'wb') do |emoji_file|
       open(url) do |raw|
